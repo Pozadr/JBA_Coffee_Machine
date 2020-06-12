@@ -271,6 +271,146 @@ files:
         }
     }
   learner_created: false
+- name: src/machine/CoffeeMachine.java
+  visible: true
+  text: |
+    package machine;
+
+    import java.util.Scanner;
+
+    public class CoffeeMachine {
+        public static void main(String[] args) {
+            CoffeeMachine coffeeMachine = new CoffeeMachine(400, 540, 120, 9, 550);
+            coffeeMachine.displayCoffeeMachineStatus();
+            coffeeMachine.menu();
+            coffeeMachine.displayCoffeeMachineStatus();
+        }
+
+        private int waterMagazine = 0;
+        private int milkMagazine = 0;
+        private int coffeeBeansMagazine = 0;
+        private int disposableCups = 0;
+        private int money = 0;
+
+        public CoffeeMachine (int waterMagazine, int milkMagazine, int coffeeBeansMagazine, int disposableCups, int money) {
+            this.waterMagazine = waterMagazine;
+            this.milkMagazine = milkMagazine;
+            this.coffeeBeansMagazine = coffeeBeansMagazine;
+            this.disposableCups = disposableCups;
+            this.money = money;
+        }
+
+        public void displayCoffeeMachineStatus() {
+            System.out.println("The coffee machine has:");
+            System.out.println(waterMagazine + " of water");
+            System.out.println(milkMagazine + " of milk");
+            System.out.println(coffeeBeansMagazine + " of coffee beans");
+            System.out.println(disposableCups + " of disposable cups");
+            System.out.println(money + " of money");
+        }
+
+        public void menu() {
+            System.out.println("Write action (buy, fill, take): ");
+            Scanner scanner = new Scanner(System.in);
+            String userDecision = scanner.next();
+            switch (userDecision) {
+                case "buy": {
+                    System.out.println("What do you want to buy? 1 - espresso, 2 - latte, 3 - cappuccino: ");
+                    String userDecisionBuyCoffee = scanner.next();
+                    switch (userDecisionBuyCoffee) {
+                        case "1": {
+                            buyCoffee(250,0, 16, 4);
+                            break;
+                        }
+                        case "2": {
+                            buyCoffee(350,75, 20, 7);
+                            break;
+                        }
+                        case "3": {
+                            buyCoffee(200,100, 12, 6);
+                            break;
+                        }
+                        default: {
+                            System.out.println("Wrong input.");
+                        }
+                    }
+                    break;
+                }
+                case "fill": {
+                    fillCoffeeMachine();
+                    break;
+                }
+                case "take": {
+                    takeCoffeMachineMoney();
+                    break;
+                }
+                default: {
+                    System.out.println("Wrong input.");
+                }
+            }
+        }
+
+        public void buyCoffee(int water, int milk, int coffeeBeans, int cost) {
+
+            // How many cups is possible to make?
+            /*
+            int howManyCupsWater = waterMagazine / 200;
+            int howManyCupsMilk= milkMagazine / 50;
+            int howManyCupsCoffeeBeans = coffeeBeansMagazine / 15;
+            int howManyCupsPossible = Math.min(Math.min(howManyCupsWater, howManyCupsMilk), howManyCupsCoffeeBeans);
+            if (howManyCupsPossible == userOrder) {
+                System.out.println("Yes, I can make that amount of coffee");
+            } else if (howManyCupsPossible > userOrder) {
+                System.out.println("Yes, I can make that amount of coffee (and even " + (howManyCupsPossible - userOrder) + " more than that)");
+            } else {
+                System.out.println("No, I can make only " + howManyCupsPossible + " cup(s) of coffee");
+            }
+             */
+
+            this.waterMagazine -= water;
+            this.milkMagazine -= milk;
+            this.coffeeBeansMagazine -= coffeeBeans;
+            this.money += cost;
+            this.disposableCups -= 1;
+
+        }
+
+        public void fillCoffeeMachine() {
+            Scanner scanner = new Scanner(System.in);
+            System.out.println("Write how many ml of water the coffee machine has: ");
+            this.waterMagazine += scanner.nextInt();
+            System.out.println("Write how many ml of milk the coffee machine has: ");
+            this.milkMagazine += scanner.nextInt();
+            System.out.println("Write how many grams of coffee beans the coffee machine has: ");
+            this.coffeeBeansMagazine += scanner.nextInt();
+            System.out.println("Write how many disposable cups of coffee do you want to add: ");
+            this.disposableCups += scanner.nextInt();
+
+        }
+
+        public void takeCoffeMachineMoney() {
+            System.out.println("I gave you $" + this.money);
+            this.money = 0;
+        }
+
+
+    }
+  learner_created: true
+- name: src/machine/Main.java
+  visible: true
+  text: |
+    package machine;
+
+    public class Main {
+        public static void main(String[] args) {
+            CoffeeMachine coffeeMachine = new CoffeeMachine(400, 540, 120, 9, 550);
+            coffeeMachine.displayCoffeeMachineStatus();
+            coffeeMachine.menu();
+            coffeeMachine.displayCoffeeMachineStatus();
+        }
+
+    }
+  learner_created: true
 feedback_link: https://hyperskill.org/projects/33/stages/179/implement
-status: Unchecked
+status: Solved
 record: -1
