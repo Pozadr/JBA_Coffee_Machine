@@ -22,16 +22,12 @@ public class CoffeeMachine {
     // Unlock only to pass the JetBrains application testing
     public static void main(String[] args) {
         CoffeeMachine coffeeMachine = new CoffeeMachine(400, 540, 120, 9, 550);
-        boolean exit = true;
         Scanner scanner = new Scanner(System.in);
-        while(exit) {
+        do {
             coffeeMachine.displayMainMenu();
-            exit = coffeeMachine.checkUserInput(scanner.next());
-        }
+        } while(coffeeMachine.checkUserInput(scanner.next()));
     }
-
      */
-
     private void displayCoffeeMachineStatus() {
         System.out.println("The coffee machine has:");
         System.out.println(waterMagazine + " of water");
@@ -87,16 +83,19 @@ public class CoffeeMachine {
                 break;
             case WAIT_FOR_COFFEE_VARIANT:
                 switch (userDecision) {
-                    case "1":
-                        buyCoffee(250, 0, 16, 4);
+                    case "1":  //Espresso
+                        buyCoffee(CoffeeType.ESPRESSO.water, CoffeeType.ESPRESSO.milk, CoffeeType.ESPRESSO.beans,
+                                CoffeeType.ESPRESSO.cost);
                         break;
 
-                    case "2":
-                        buyCoffee(350, 75, 20, 7);
+                    case "2":  // Latte
+                        buyCoffee(CoffeeType.LATTE.water, CoffeeType.LATTE.milk, CoffeeType.LATTE.beans,
+                                CoffeeType.LATTE.cost);
                         break;
 
-                    case "3":
-                        buyCoffee(200, 100, 12, 6);
+                    case "3": // Cappuccino
+                        buyCoffee(CoffeeType.CAPPUCCINO.water, CoffeeType.CAPPUCCINO.milk, CoffeeType.CAPPUCCINO.beans,
+                                CoffeeType.CAPPUCCINO.cost);
                         break;
 
                     case "back":
