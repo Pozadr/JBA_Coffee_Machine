@@ -3,26 +3,36 @@ package machine;
 import java.util.Scanner;
 
 public class CoffeeMachine {
-    public static void main(String[] args) {
-        CoffeeMachine coffeeMachine = new CoffeeMachine(400, 540, 120, 9, 550);
-        coffeeMachine.menu();
-    }
 
     private int waterMagazine;
     private int milkMagazine;
     private int coffeeBeansMagazine;
     private int disposableCups;
     private int money;
+    private MachineState state = MachineState.WAIT_FOR_ACTION;
 
-    public CoffeeMachine (int waterMagazine, int milkMagazine, int coffeeBeansMagazine, int disposableCups, int money) {
+    public CoffeeMachine(int waterMagazine, int milkMagazine, int coffeeBeansMagazine, int disposableCups, int money) {
         this.waterMagazine = waterMagazine;
         this.milkMagazine = milkMagazine;
         this.coffeeBeansMagazine = coffeeBeansMagazine;
         this.disposableCups = disposableCups;
         this.money = money;
     }
+    /*
+    // Unlock only to pass the JetBrains application testing
+    public static void main(String[] args) {
+        CoffeeMachine coffeeMachine = new CoffeeMachine(400, 540, 120, 9, 550);
+        boolean exit = true;
+        Scanner scanner = new Scanner(System.in);
+        while(exit) {
+            coffeeMachine.displayMainMenu();
+            exit = coffeeMachine.checkUserInput(scanner.next());
+        }
+    }
 
-    public void displayCoffeeMachineStatus() {
+     */
+
+    private void displayCoffeeMachineStatus() {
         System.out.println("The coffee machine has:");
         System.out.println(waterMagazine + " of water");
         System.out.println(milkMagazine + " of milk");
@@ -31,63 +41,80 @@ public class CoffeeMachine {
         System.out.println(money + " of money");
     }
 
-    public void menu() {
-        boolean exit = true;
-        Scanner scanner = new Scanner(System.in);
-        while(exit) {
-            System.out.println("Write action (buy, fill, take, remaining, exit): ");
-            String userDecision = scanner.next();
-            switch (userDecision) {
-                case "buy": {
-                    System.out.println("What do you want to buy? 1 - espresso, 2 - latte, 3 - cappuccino, " +
-                            "back - to main menu: ");
-                    String userDecisionBuyCoffee = scanner.next();
-                    switch (userDecisionBuyCoffee) {
-                        case "1": {
-                            buyCoffee(250,0, 16, 4);
-                            break;
-                        }
-                        case "2": {
-                            buyCoffee(350,75, 20, 7);
-                            break;
-                        }
-                        case "3": {
-                            buyCoffee(200,100, 12, 6);
-                            break;
-                        }
-                        case "back": {
-                            break;
-                        }
-                        default: {
-                            System.out.println("Wrong input.");
-                        }
-                    }
-                    break;
-                }
-                case "fill": {
-                    fillCoffeeMachine();
-                    break;
-                }
-                case "take": {
-                    takeCoffeMachineMoney();
-                    break;
-                }
-                case "remaining": {
-                    displayCoffeeMachineStatus();
-                    break;
-                }
-                case "exit": {
-                    exit = false;
-                    break;
-                }
-                default: {
-                    System.out.println("Wrong input.");
-                }
-            }
+    public void displayMainMenu() {
+        switch (state) {
+            case WAIT_FOR_ACTION:
+                System.out.println("Write action (buy, fill, take, remaining, exit): ");
+                break;
+            case WAIT_FOR_COFFEE_VARIANT:
+                System.out.println("What do you want to buy? 1 - espresso, 2 - latte, 3 - cappuccino, " +
+                        "back - to main menu: ");
+                break;
+            default:
+                System.out.println("Fault! Wrong status of the machine.");
         }
     }
 
-    public void buyCoffee(int water, int milk, int coffeeBeans, int cost) {
+    public boolean checkUserInput(String userDecision) {
+        boolean exit = true;
+        switch (state) {
+            case WAIT_FOR_ACTION:
+                switch (userDecision) {
+                    case "buy":
+                        state = MachineState.WAIT_FOR_COFFEE_VARIANT;
+                        break;
+
+                    case "fill":
+                        fillCoffeeMachine();
+                        break;
+
+                    case "take":
+                        takeCoffeeMachineMoney();
+                        break;
+
+                    case "remaining":
+                        displayCoffeeMachineStatus();
+                        break;
+
+                    case "exit":
+                        exit = false;
+                        break;
+
+                    default:
+                        System.out.println("Wrong input.");
+
+                }
+                break;
+            case WAIT_FOR_COFFEE_VARIANT:
+                switch (userDecision) {
+                    case "1":
+                        buyCoffee(250, 0, 16, 4);
+                        break;
+
+                    case "2":
+                        buyCoffee(350, 75, 20, 7);
+                        break;
+
+                    case "3":
+                        buyCoffee(200, 100, 12, 6);
+                        break;
+
+                    case "back":
+                        state = MachineState.WAIT_FOR_ACTION;
+                        break;
+
+                    default:
+                        System.out.println("Wrong input.");
+
+                }
+                break;
+            default:
+                System.out.println("Wrong status of the machine!");
+        }
+        return exit;
+    }
+
+    private void buyCoffee(int water, int milk, int coffeeBeans, int cost) {
         if (disposableCups > 0 && this.waterMagazine >= water && this.milkMagazine >= milk
                 && this. coffeeBeansMagazine >= coffeeBeans) {
             System.out.println("I have enough resources, making you a coffee!");
@@ -105,9 +132,10 @@ public class CoffeeMachine {
         } else {
             System.out.println("Error!");
         }
+        state = MachineState.WAIT_FOR_ACTION;
     }
 
-    public void fillCoffeeMachine() {
+    private void fillCoffeeMachine() {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Write how many ml of water the coffee machine has: ");
         this.waterMagazine += scanner.nextInt();
@@ -120,7 +148,7 @@ public class CoffeeMachine {
 
     }
 
-    public void takeCoffeMachineMoney() {
+    private void takeCoffeeMachineMoney() {
         System.out.println("I gave you $" + this.money);
         this.money = 0;
     }
